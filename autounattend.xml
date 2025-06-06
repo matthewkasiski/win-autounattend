@@ -1,7 +1,6 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <unattend xmlns="urn:schemas-microsoft-com:unattend" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
-	<!--https://schneegans.de/windows/unattend-generator/?LanguageMode=Unattended&UILanguage=en-US&Locale=en-US&Keyboard=00000409&GeoLocation=244&ProcessorArchitecture=amd64&BypassRequirementsCheck=true&BypassNetworkCheck=true&ComputerNameMode=Random&CompactOsMode=Default&TimeZoneMode=Implicit&PartitionMode=Interactive&DiskAssertionMode=Skip&WindowsEditionMode=Generic&WindowsEdition=pro&UserAccountMode=InteractiveLocal&PasswordExpirationMode=Unlimited&LockoutMode=Default&HideFiles=Hidden&ShowFileExtensions=true&ClassicContextMenu=true&LaunchToThisPC=true&ShowEndTask=true&TaskbarSearch=Hide&TaskbarIconsMode=Default&DisableWidgets=true&LeftTaskbar=true&ShowAllTrayIcons=true&DisableBingResults=true&StartTilesMode=Default&StartPinsMode=Empty&PreventDeviceEncryption=true&HideEdgeFre=true&EffectsMode=Performance&DesktopIconsMode=Custom&IconRecycleBin=true&IconThisPC=true&IconUserFiles=true&WifiMode=Skip&ExpressSettings=DisableAll&KeysMode=Skip&ColorMode=Default&WallpaperMode=Default&Remove3DViewer=true&RemoveBingSearch=true&RemoveCamera=true&RemoveClipchamp=true&RemoveClock=true&RemoveCopilot=true&RemoveCortana=true&RemoveDevHome=true&RemoveFamily=true&RemoveFeedbackHub=true&RemoveGetHelp=true&RemoveHandwriting=true&RemoveInternetExplorer=true&RemoveMailCalendar=true&RemoveMaps=true&RemoveMathInputPanel=true&RemoveMediaFeatures=true&RemoveMixedReality=true&RemoveZuneVideo=true&RemoveNews=true&RemoveOffice365=true&RemoveOneDrive=true&RemoveOneNote=true&RemoveOneSync=true&RemoveOpenSSHClient=true&RemoveOutlook=true&RemovePaint=true&RemovePeople=true&RemovePowerAutomate=true&RemovePowerShell2=true&RemovePowerShellISE=true&RemoveQuickAssist=true&RemoveRecall=true&RemoveRdpClient=true&RemoveSkype=true&RemoveSolitaire=true&RemoveSpeech=true&RemoveStepsRecorder=true&RemoveStickyNotes=true&RemoveTeams=true&RemoveGetStarted=true&RemoveToDo=true&RemoveVoiceRecorder=true&RemoveWallet=true&RemoveWeather=true&RemoveFaxAndScan=true&RemoveWindowsHello=true&RemoveWindowsMediaPlayer=true&RemoveZuneMusic=true&RemoveWindowsTerminal=true&RemoveWordPad=true&RemoveXboxApps=true&RemoveYourPhone=true&WdacMode=Skip-->
+	<!--https://schneegans.de/windows/unattend-generator/?LanguageMode=Unattended&UILanguage=en-US&Locale=en-US&Keyboard=00000409&GeoLocation=244&ProcessorArchitecture=amd64&BypassRequirementsCheck=true&BypassNetworkCheck=true&ComputerNameMode=Random&CompactOsMode=Default&TimeZoneMode=Implicit&PartitionMode=Interactive&DiskAssertionMode=Skip&WindowsEditionMode=Generic&WindowsEdition=pro&InstallFromMode=Automatic&UserAccountMode=InteractiveLocal&PasswordExpirationMode=Unlimited&LockoutMode=Default&HideFiles=Hidden&ShowFileExtensions=true&ClassicContextMenu=true&LaunchToThisPC=true&ShowEndTask=true&TaskbarSearch=Hide&TaskbarIconsMode=Default&DisableWidgets=true&LeftTaskbar=true&HideTaskViewButton=true&ShowAllTrayIcons=true&DisableBingResults=true&StartTilesMode=Default&StartPinsMode=Empty&PreventDeviceEncryption=true&HideEdgeFre=true&EffectsMode=Performance&DesktopIconsMode=Custom&IconRecycleBin=true&IconThisPC=true&IconUserFiles=true&WifiMode=Skip&ExpressSettings=DisableAll&KeysMode=Skip&StickyKeysMode=Disabled&ColorMode=Default&WallpaperMode=Default&Remove3DViewer=true&RemoveBingSearch=true&RemoveCamera=true&RemoveClipchamp=true&RemoveClock=true&RemoveCopilot=true&RemoveCortana=true&RemoveDevHome=true&RemoveFamily=true&RemoveFeedbackHub=true&RemoveGetHelp=true&RemoveHandwriting=true&RemoveInternetExplorer=true&RemoveMailCalendar=true&RemoveMaps=true&RemoveMathInputPanel=true&RemoveMediaFeatures=true&RemoveMixedReality=true&RemoveZuneVideo=true&RemoveNews=true&RemoveOffice365=true&RemoveOneDrive=true&RemoveOneNote=true&RemoveOneSync=true&RemoveOpenSSHClient=true&RemoveOutlook=true&RemovePaint=true&RemovePeople=true&RemovePowerAutomate=true&RemovePowerShell2=true&RemovePowerShellISE=true&RemoveQuickAssist=true&RemoveRecall=true&RemoveRdpClient=true&RemoveSkype=true&RemoveSolitaire=true&RemoveSpeech=true&RemoveStepsRecorder=true&RemoveStickyNotes=true&RemoveTeams=true&RemoveGetStarted=true&RemoveToDo=true&RemoveVoiceRecorder=true&RemoveWallet=true&RemoveWeather=true&RemoveFaxAndScan=true&RemoveWindowsHello=true&RemoveWindowsMediaPlayer=true&RemoveZuneMusic=true&RemoveWindowsTerminal=true&RemoveWordPad=true&RemoveXboxApps=true&RemoveYourPhone=true&WdacMode=Configure&WdacAuditMode=AuditingOnBootFailure&WdacScriptMode=Restricted-->
 	<settings pass="offlineServicing"></settings>
 	<settings pass="windowsPE">
 		<component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
@@ -375,6 +374,66 @@ $key = 'Registry::HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start';
 New-Item -Path $key -ItemType 'Directory' -ErrorAction 'SilentlyContinue';
 Set-ItemProperty -LiteralPath $key -Name 'ConfigureStartPins' -Value $json -Type 'String';
 		</File>
+		<File path="C:\Windows\Setup\Scripts\Wdac.ps1">
+Set-StrictMode -Version 'Latest';
+$ErrorActionPreference = 'Stop';
+$(
+  try {
+    $guid = '{d26bff32-33a2-48a3-b037-10357ee48427}';
+    $xml = "C:\Windows\System32\CodeIntegrity\CiPolicies\Active\${guid}.xml";
+    $binary = "C:\Windows\System32\CodeIntegrity\CiPolicies\Active\${guid}.cip";
+    Copy-Item -LiteralPath 'C:\Windows\schemas\CodeIntegrity\ExamplePolicies\DefaultWindows_Enforced.xml' -Destination $xml;
+    Set-RuleOption -FilePath $xml -Option 0;
+    Set-RuleOption -FilePath $xml -Option 6;
+    Set-RuleOption -FilePath $xml -Option 9;
+    Set-RuleOption -FilePath $xml -Option 16;
+    Set-RuleOption -FilePath $xml -Option 18;
+    Set-RuleOption -FilePath $xml -Option 5 -Delete;
+    Set-RuleOption -FilePath $xml -Option 10;
+    Merge-CIPolicy -PolicyPaths $xml -OutputFilePath $xml -Rules $(
+      @(
+        New-CIPolicyRule -FilePathRule 'C:\Windows\*';
+        New-CIPolicyRule -FilePathRule 'C:\Program Files\*';
+        New-CIPolicyRule -FilePathRule 'C:\Program Files (x86)\*';
+        New-CIPolicyRule -FilePathRule '%WINDIR%\debug\WIA\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\PLA\Reports\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\PLA\Rules\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\PLA\Templates\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\Registration\CRMLog\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\Com\dmp\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\FxsTmp\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\LogFiles\WMI\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\Microsoft\Crypto\RSA\MachineKeys\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\spool\drivers\color\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\spool\PRINTERS\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\spool\SERVERS\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\Tasks_Migrated\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\System32\Tasks\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\SysWOW64\Com\dmp\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\SysWOW64\FxsTmp\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\SysWOW64\Tasks\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\Tasks\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\Temp\*' -Deny;
+        New-CIPolicyRule -FilePathRule '%WINDIR%\tracing\*' -Deny;
+      ) | ForEach-Object -Process {
+        $_;
+      };
+    );
+    $doc = [xml]::new();
+    $doc.Load( $xml );
+    $nsmgr = [System.Xml.XmlNamespaceManager]::new( $doc.NameTable );
+    $nsmgr.AddNamespace( 'pol', 'urn:schemas-microsoft-com:sipolicy' );
+    $doc.SelectSingleNode( '/pol:SiPolicy/pol:PolicyID', $nsmgr ).InnerText = $guid;
+    $doc.SelectSingleNode( '/pol:SiPolicy/pol:BasePolicyID', $nsmgr ).InnerText = $guid;
+    $node = $doc.SelectSingleNode( '//pol:SigningScenario[@Value="12"]/pol:ProductSigners/pol:AllowedSigners', $nsmgr );
+    $node.ParentNode.RemoveChild( $node );
+    $doc.Save( $xml );
+    ConvertFrom-CIPolicy -XmlFilePath $xml -BinaryFilePath $binary;
+  } catch {
+    $_;
+  }
+) *&gt;&amp;1 | Out-File -Append -FilePath 'C:\Windows\Setup\Scripts\Wdac.log';
+		</File>
 		<File path="C:\Windows\Setup\Scripts\Specialize.ps1">
 $scripts = @(
 	{
@@ -414,7 +473,7 @@ $scripts = @(
 		reg.exe add "HKLM\SYSTEM\CurrentControlSet\Control\BitLocker" /v "PreventDeviceEncryption" /t REG_DWORD /d 1 /f;
 	};
 	{
-		reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v HideFirstRunExperience /t REG_DWORD /d 1 /f;
+		reg.exe add "HKLM\Software\Policies\Microsoft\Edge" /v HideFirstRunExperience /t REG_DWORD /d 1 /f;
 	};
 	{
 		Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\SetStartPins.ps1' -Raw | Invoke-Expression;
@@ -437,6 +496,12 @@ $scripts = @(
 		Set-ItemProperty -LiteralPath "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects\FontSmoothing" -Name 'DefaultValue' -Value 0 -Type 'DWord' -Force;
 		Set-ItemProperty -LiteralPath "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects\ListBoxSmoothScrolling" -Name 'DefaultValue' -Value 0 -Type 'DWord' -Force;
 		Set-ItemProperty -LiteralPath "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects\DropShadow" -Name 'DefaultValue' -Value 0 -Type 'DWord' -Force;
+	};
+	{
+		reg.exe add "HKU\.DEFAULT\Control Panel\Accessibility\StickyKeys" /v Flags /t REG_SZ /d 10 /f;
+	};
+	{
+		Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\Wdac.ps1' -Raw | Invoke-Expression;
 	};
 );
 
@@ -562,6 +627,9 @@ $scripts = @(
 		Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\ShowAllTrayIcons.ps1' -Raw | Invoke-Expression;
 	};
 	{
+		reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowTaskViewButton /t REG_DWORD /d 0 /f;
+	};
+	{
 		reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarAl /t REG_DWORD /d 0 /f;
 	};
 	{
@@ -569,6 +637,9 @@ $scripts = @(
 	};
 	{
 		reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings" /v TaskbarEndTask /t REG_DWORD /d 1 /f;
+	};
+	{
+		reg.exe add "HKU\DefaultUser\Control Panel\Accessibility\StickyKeys" /v Flags /t REG_SZ /d 10 /f;
 	};
 	{
 		reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\RunOnce" /v "UnattendedSetup" /t REG_SZ /d "powershell.exe -WindowStyle Normal -NoProfile -Command \""Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\UserOnce.ps1' -Raw | Invoke-Expression;\""" /f;
